@@ -9,6 +9,7 @@ ext {
     rxJavaVersion = '2.0.2'
     javaxAnnotationVersion = '1.0'
     javaxInjectVersion = '1'
+    gsonVersion = '2.3'
 
     //Testing
     jUnitVersion = '4.12'
@@ -25,5 +26,9 @@ ext {
             junit:              "junit:junit:${jUnitVersion}",
             mockito:            "org.mockito:mockito-core:${mockitoVersion}",
             assertj:            "org.assertj:assertj-core:${assertJVersion}"
+    ]
+
+    dataDependencies = [
+            gson:               "com.google.code.gson:gson:${gsonVersion}",
     ]
 }
