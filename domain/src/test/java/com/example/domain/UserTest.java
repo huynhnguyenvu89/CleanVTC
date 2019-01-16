@@ -6,9 +6,8 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UserTest {
-
-    private static final int FAKE_USER_ID = 0;
     private User user;
+    private int FAKE_USER_ID = 1;
 
     @Before
     public void setup(){

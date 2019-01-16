@@ -6,7 +6,9 @@ import io.reactivex.Observable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.TestScheduler;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -16,42 +18,46 @@ import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UseCaseTest {
-
     private UseCaseTestClass useCase;
-    private TestDisposableObserver testObserver;
 
     @Mock
     private ThreadExecutor threadExecutor;
     @Mock
     private PostExecutionThread postExecutionThread;
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+    private TestDisposableObserver<Object> disposableObserver;
 
     @Before
     public void setup(){
-        this.useCase = new UseCaseTestClass(threadExecutor, postExecutionThread);
-        this.testObserver = new TestDisposableObserver<Object>();
+        useCase = new UseCaseTestClass(threadExecutor, postExecutionThread);
+        disposableObserver = new TestDisposableObserver<>();
         given(postExecutionThread.getScheduler()).willReturn(new TestScheduler());
     }
 
     @Test
     public void testBuildUseCaseObservableReturnCorrectResult(){
-        useCase.execute(testObserver, Params.EMPTY);
-        assertThat(testObserver.valuesCount).isZero();
+        useCase.execute(disposableObserver, new Params());
+        assertThat(disposableObserver.valuesCount).isZero();
+        assertThat(disposableObserver.isDisposed()).isFalse();
+        useCase.dispose();
+        assertThat(disposableObserver.isDisposed()).isTrue();
     }
 
     @Test
     public void testSubscriptionWhenExecutingUseCase(){
-        useCase.execute(testObserver, Params.EMPTY);
+        useCase.execute(disposableObserver, new Params());
         useCase.dispose();
-
-        assertThat(testObserver.isDisposed()).isTrue();
+        assertThat(disposableObserver.isDisposed()).isTrue();
     }
 
     @Test
     public void testShouldFailWhenExecuteWithNullObserver(){
-        useCase.execute(null, Params.EMPTY);
+        expectedException.expect(NullPointerException.class);
+        useCase.execute(null, new Params());
     }
 
-    private static class UseCaseTestClass extends UseCase<Object, Params> {
+    private class UseCaseTestClass extends UseCase<Object, Params>{
 
         UseCaseTestClass(ThreadExecutor threadExecutor, PostExecutionThread postExecutionThread){
             super(threadExecutor, postExecutionThread);
@@ -61,22 +67,16 @@ public class UseCaseTest {
         Observable<Object> buildUseCaseObservable(Params params) {
             return Observable.empty();
         }
-
-        @Override
-        public void execute(DisposableObserver<Object> observer, Params params) {
-            super.execute(observer, params);
-        }
     }
 
     private static class Params {
-        private static Params EMPTY = new Params();
-        private Params(){}
+        private Params (){}
     }
 
-    private class TestDisposableObserver<T> extends DisposableObserver<T>{
+    private static class TestDisposableObserver<T> extends DisposableObserver<T> {
         private int valuesCount = 0;
         @Override
-        public void onNext(Object value) {
+        public void onNext(T value) {
             valuesCount ++;
         }
 
