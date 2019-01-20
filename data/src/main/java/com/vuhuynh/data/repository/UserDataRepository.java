@@ -3,6 +3,7 @@ package com.vuhuynh.data.repository;
 import com.example.domain.User;
 import com.example.domain.repository.UserRepository;
 import com.vuhuynh.data.entity.mapper.UserEntityDataMapper;
+import com.vuhuynh.data.repository.datasource.UserDataStore;
 import com.vuhuynh.data.repository.datasource.UserDataStoreFactory;
 import io.reactivex.Observable;
 
@@ -33,11 +34,14 @@ public class UserDataRepository implements UserRepository {
 
     @Override
     public Observable<List<User>> users() {
-        return null;
+        //We always get all users from the cloud
+        UserDataStore userDataStore = this.userDataStoreFactory.createCloudUserDataStore();
+        return userDataStore.userEntityList().map(this.userEntityDataMapper::transform);
     }
 
     @Override
     public Observable<User> user(int userId) {
-        return null;
+        UserDataStore userDataStore = this.userDataStoreFactory.create(userId);
+        return userDataStore.userEntityDetails(userId).map(this.userEntityDataMapper::transform);
     }
 }

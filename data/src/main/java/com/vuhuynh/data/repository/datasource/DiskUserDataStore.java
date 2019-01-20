@@ -1,8 +1,8 @@
 package com.vuhuynh.data.repository.datasource;
 
-import android.database.Observable;
 import com.vuhuynh.data.cache.UserCache;
 import com.vuhuynh.data.entity.UserEntity;
+import io.reactivex.Observable;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -10,6 +10,12 @@ import java.util.List;
 public class DiskUserDataStore implements UserDataStore {
 
     private UserCache userCache;
+
+    /**
+     * Construct a {@link UserDataStore} based file system data store.
+     *
+     * @param userCache a {@link UserCache} to cache data retrieved from the api.
+     */
     @Inject
     DiskUserDataStore(UserCache userCache){
         this.userCache = userCache;
@@ -17,11 +23,11 @@ public class DiskUserDataStore implements UserDataStore {
 
     @Override
     public Observable<List<UserEntity>> userEntityList() {
-        return null;
+        throw new UnsupportedOperationException("TODO: Operation is not available.");
     }
 
     @Override
     public Observable<UserEntity> userEntityDetails(int userId) {
-        return null;
+        return this.userCache.get(userId);
     }
 }

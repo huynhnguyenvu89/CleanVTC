@@ -1,7 +1,7 @@
 package com.vuhuynh.data.repository.datasource;
 
-import android.database.Observable;
 import com.vuhuynh.data.entity.UserEntity;
+import io.reactivex.Observable;
 
 import java.util.List;
 
