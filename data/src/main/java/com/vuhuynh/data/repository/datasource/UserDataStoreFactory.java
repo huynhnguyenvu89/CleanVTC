@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import com.example.domain.User;
 import com.vuhuynh.data.cache.UserCache;
 import com.vuhuynh.data.entity.UserEntity;
+import com.vuhuynh.data.net.RestApi;
+import com.vuhuynh.data.net.RestApiImpl;
 
 import javax.inject.Inject;
 
@@ -36,7 +38,12 @@ public class UserDataStoreFactory {
          return userDataStore;
     }
 
+    /**
+     * Create a {@link UserDataStore} to retrieve data from the cloud.
+     * @return
+     */
     public UserDataStore createCloudUserDataStore(){
-        return new CloudUserDataStore();
+        final RestApi restApi = new RestApiImpl();
+        return new CloudUserDataStore(restApi, userCache);
     }
 }
