@@ -2,14 +2,16 @@ package com.vuhuynh.data.repository.datasource;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import com.example.domain.User;
 import com.vuhuynh.data.cache.UserCache;
-import com.vuhuynh.data.entity.UserEntity;
+import com.vuhuynh.data.entity.mapper.UserEntityJsonMapper;
 import com.vuhuynh.data.net.RestApi;
 import com.vuhuynh.data.net.RestApiImpl;
 
 import javax.inject.Inject;
 
+/**
+ * Factory that creates different implementation of {@link UserDataStore}
+ */
 public class UserDataStoreFactory {
 
     private final Context context;
@@ -43,7 +45,8 @@ public class UserDataStoreFactory {
      * @return
      */
     public UserDataStore createCloudUserDataStore(){
-        final RestApi restApi = new RestApiImpl();
+        final UserEntityJsonMapper userEntityJsonMapper = new UserEntityJsonMapper();
+        final RestApi restApi = new RestApiImpl(context, userEntityJsonMapper);
         return new CloudUserDataStore(restApi, userCache);
     }
 }

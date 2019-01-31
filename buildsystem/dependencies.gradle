@@ -10,6 +10,7 @@ ext {
     javaxAnnotationVersion = '1.0'
     javaxInjectVersion = '1'
     gsonVersion = '2.3'
+    okHttpVersion = '2.5.0'
 
     //Testing
     jUnitVersion = '4.12'
@@ -30,5 +31,6 @@ ext {
 
     dataDependencies = [
             gson:               "com.google.code.gson:gson:${gsonVersion}",
+            okHttp:             "com.squareup.okhttp:okhttp:${okHttpVersion}"
     ]
 }
